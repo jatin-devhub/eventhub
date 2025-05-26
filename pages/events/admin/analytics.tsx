@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import Header from '@/components/Header';
+import { useRouter } from 'next/router';
 
 interface PopularEvent {
   id: number;
@@ -16,13 +17,24 @@ export default function AnalyticsPage() {
   const [daily, setDaily] = useState<DailyStat[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
         const [popRes, dailyRes] = await Promise.all([
-          fetch('/api/admin/popular'),
-          fetch('/api/admin/daily'),
+          fetch('/api/admin/popular', {
+            method: 'GET',
+            headers: {
+              'x-admin-secret': localStorage.getItem("admin-token") + ""
+            }
+          }),
+          fetch('/api/admin/daily', {
+            method: 'GET',
+            headers: {
+              'x-admin-secret': localStorage.getItem("admin-token") + ""
+            }
+          }),
         ]);
         if (!popRes.ok || !dailyRes.ok) throw new Error();
         const popData: PopularEvent[] = await popRes.json();
@@ -35,6 +47,8 @@ export default function AnalyticsPage() {
         setLoading(false);
       }
     };
+    if (localStorage.getItem("admin-token") !== process.env.NEXT_PUBLIC_ADMIN_SECRET)
+      router.push("/events/admin/login");
     fetchStats();
   }, []);
 

@@ -1,9 +1,13 @@
+import { isAdminAuthorized } from "@/lib/checkAdminAuth";
 import db from "@/lib/db";
 import { NextApiRequest, NextApiResponse } from "next";
 
 // GET /api/admin/registrations/daily - Registrations grouped by day
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'GET') {
+        if (!isAdminAuthorized(req)) {
+            return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
+        }
         try {
             const stmt = db.prepare(`
                 select date(created_at) as date, count(*) as registrations
