@@ -75,7 +75,7 @@ export default function EventDetailPage() {
   return (
     <>
       <Header />
-      <div className="container mx-auto p-4">
+      <div className="container mx-auto p-10">
         {loading && <p>Loading event...</p>}
         {error && <p className="text-red-500">{error}</p>}
         {event && (

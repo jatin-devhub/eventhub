@@ -113,7 +113,7 @@ export default function EventsPage() {
               <li key={event.id} className="border p-4 rounded m-2">
                 <div>
                   <h2 className="text-lg font-medium">{event.title}</h2>
-                  <p>{event.description}</p>
+                  <p>{event.description.length > 50 ? event.description.substring(0, 50)+"..." : event.description}</p>
                   <p className="text-sm text-gray-500">
                     {event.location} | {new Date(event.date).toLocaleString()}
                   </p>
