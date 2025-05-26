@@ -21,11 +21,13 @@ export default function EventsPage() {
   const [error, setError] = useState<string | null>(null);
   const [registrationError, setRegistrationError] = useState<string | null>(null);
   const [registerLoading, setRegisterLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
 
   const fetchEvents = async () => {
     setLoading(true);
     try {
-      const params = new URLSearchParams();
+      const params = new URLSearchParams({ page: String(page), limit: String(limit) });
       Object.entries(filters).forEach(([key, value]) => {
         if (value) params.append(key, value);
       });
@@ -40,7 +42,7 @@ export default function EventsPage() {
     }
   };
 
-  useEffect(() => { fetchEvents(); }, [filters]);
+  useEffect(() => { fetchEvents(); }, [filters, page]);
 
   const openModal = (event: Event) => {
     setSelectedEvent(event);
@@ -103,6 +105,18 @@ export default function EventsPage() {
             onChange={(e) => setFilters({ ...filters, date: e.target.value })}
           />
         </div>
+        <div className="flex items-center justify-end space-x-2">
+          <button
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            disabled={page === 1}
+            className="px-3 py-1 bg-gray-200 rounded disabled:opacity-50"
+          >Prev</button>
+          <span>Page {page}</span>
+          <button
+            onClick={() => setPage((p) => p + 1)}
+            className="px-3 py-1 bg-gray-200 rounded"
+          >Next</button>
+        </div>
 
         {loading && <p>Loading...</p>}
         {error && <p className="text-red-500">{error}</p>}
@@ -113,7 +127,7 @@ export default function EventsPage() {
               <li key={event.id} className="border p-4 rounded m-2">
                 <div>
                   <h2 className="text-lg font-medium">{event.title}</h2>
-                  <p>{event.description.length > 50 ? event.description.substring(0, 50)+"..." : event.description}</p>
+                  <p>{event.description.length > 50 ? event.description.substring(0, 50) + "..." : event.description}</p>
                   <p className="text-sm text-gray-500">
                     {event.location} | {new Date(event.date).toLocaleString()}
                   </p>

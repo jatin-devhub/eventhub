@@ -5,7 +5,11 @@ import db from '@/lib/db';
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'GET') {
 
-        const { title, location, date, dateBefore, dateAfter } = req.query;
+        const { title, location, date, dateBefore, dateAfter, page = '1', limit = '10' } = req.query;
+
+        const pageNum = Math.max(1, Number(page));
+        const limitNum = Math.max(1, Number(limit));
+        const skipRows = (pageNum - 1) * limitNum;
 
         let query = 'select * from events where 1=1';
 
@@ -35,6 +39,9 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
             query += ' and date > ?';
             params.push(dateAfter);
         }
+
+        query += ' order by date asc limit ? offset ?';
+        params.push(limitNum, skipRows);
 
         try {
             const stmt = db.prepare(query);

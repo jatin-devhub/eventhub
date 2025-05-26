@@ -1,6 +1,34 @@
 # Database
 For in memory database chose better-sqlite3 as it is faster
 
+# Back-End
+
+## Routes
+### Get /api/events
+- **Query Params**
+  - title
+  - location
+  - date
+  - dateBefore
+  - dateAfter
+  - page (default 1)
+  - limit (default 10)
+- It gets all the events paginated, filtered and ordered by date
+
+### Get /api/events/[id]
+- It gets event details
+
+### Post /api/events/register
+- Helps create event just pass name and email in the body
+
+### Get /api/admin/popular
+- It gets top 10 most popular events
+- It requires a security header x-admin-secret
+
+### Get /api/admin/daily
+- It gets registered users of each day in past 30 days
+- It requires a security header x-admin-secret
+
 # Front-End
 
 ## Components
