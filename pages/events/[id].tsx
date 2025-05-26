@@ -17,10 +17,10 @@ export default function EventDetailPage() {
   const [event, setEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isModalOpen, setModalOpen] = useState(false);
+  const [isRegisterModalOpen, setRegisterModalOpen] = useState(false);
   const [registrationData, setRegistrationData] = useState({ name: '', email: '' });
-  const [regLoading, setRegLoading] = useState(false);
-  const [regError, setRegError] = useState<string | null>(null);
+  const [registerLoading, setRegisterLoading] = useState(false);
+  const [registrationError, setRegistrationError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!id) return;
@@ -41,21 +41,21 @@ export default function EventDetailPage() {
   }, [id]);
 
   const openModal = () => {
-    setModalOpen(true);
+    setRegisterModalOpen(true);
     setRegistrationData({ name: '', email: '' });
-    setRegError(null);
+    setRegistrationError(null);
   };
 
-  const closeModal = () => setModalOpen(false);
+  const closeModal = () => setRegisterModalOpen(false);
 
   const handleRegister = async () => {
     if (!event) return;
     const { name, email } = registrationData;
     if (!name || !email) {
-      setRegError('Name and email are required');
+      setRegistrationError('Name and email are required');
       return;
     }
-    setRegLoading(true);
+    setRegisterLoading(true);
     try {
       const res = await fetch('/api/register', {
         method: 'POST',
@@ -66,9 +66,9 @@ export default function EventDetailPage() {
       closeModal();
       alert('Registered successfully');
     } catch (err) {
-      setRegError('Registration error');
+      setRegistrationError('Registration error');
     } finally {
-      setRegLoading(false);
+      setRegisterLoading(false);
     }
   };
 
@@ -94,9 +94,9 @@ export default function EventDetailPage() {
           </div>
         )}
 
-        <Modal isOpen={isModalOpen} onClose={closeModal}>
+        <Modal isOpen={isRegisterModalOpen} onClose={closeModal}>
           <h2 className="text-xl font-semibold mb-4">Register for {event?.title}</h2>
-          {regError && <p className="text-red-500 mb-2">{regError}</p>}
+          {registrationError && <p className="text-red-500 mb-2">{registrationError}</p>}
           <input
             type="text"
             placeholder="Your Name"
@@ -115,7 +115,7 @@ export default function EventDetailPage() {
             className="px-4 py-2 bg-green-500 text-white rounded"
             onClick={handleRegister}
           >
-            {regLoading ? 'Submitting...' : 'Submit'}
+            {registerLoading ? 'Submitting...' : 'Submit'}
           </button>
         </Modal>
       </div>
